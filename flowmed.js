@@ -93,7 +93,9 @@ const cubeTexture = cubeTextureLoader.load(['posx.jpg', 'negx.jpg', 'posy.jpg', 
 scene.background = cubeTexture;
 
 const textureLoader = new THREE.TextureLoader();
-textureLoader.load('https://threejs.org/examples/textures/floors/FloorsCheckerboard_S_Diffuse.jpg', function(map) {
+
+textureLoader.load('textures/hardwood2_diffuse.jpg', function(map) {
+//textureLoader.load('textures/floors/FloorsCheckerboard_S_Diffuse.jpg', function(map) {
 
     map.wrapS = THREE.RepeatWrapping;
     map.wrapT = THREE.RepeatWrapping;
@@ -108,7 +110,7 @@ textureLoader.load('https://threejs.org/examples/textures/floors/FloorsCheckerbo
 // water
 
 const waterGeometry = new THREE.PlaneGeometry(20,20);
-let flowMap = await textureLoader.loadAsync('https://threejs.org/examples/textures/water/Water_1_M_Flow.jpg');
+let flowMap = await textureLoader.loadAsync('textures/water/Water_1_M_Flow.jpg');
 
 let cnv = document.createElement('canvas');
 cnv.width = flowMap.source.data.width;
@@ -225,7 +227,9 @@ let pup = (e)=>{
 }
 
 let lastMouse;
+let lastButtons;
 let curMouse = new THREE.Vector3();
+
 let doPaint = ()=>{
 
     if (!buttons) {
@@ -243,6 +247,13 @@ let doPaint = ()=>{
         if (!lastMouse) {
             lastMouse = curMouse.clone();
         }
+        if(lastButtons!==buttons){
+            lastButtons = buttons;
+            lastMouse.copy(curMouse);
+            return;
+        }
+        
+            
         let vx = lastMouse.x - curMouse.x;
         let vy = lastMouse.y - curMouse.y;
         let px = (((curMouse.x / 10) + 1) * ctx.canvas.width * .5);
@@ -283,10 +294,10 @@ function enableImageDrop(canvas) {
             reader.onload = (event) => {
                 const img = new Image();
                 img.onload = () => {
-                    const ctx = canvas.getContext('2d');
-                    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height); // Draw the image on canvas
-                    
+                    //const ctx = canvas.getContext('2d');
+                    //ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+                    ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height); // Draw the image on canvas
+                    flowMap.needsUpdate = true;
                 };
                 img.src = event.target.result;
             };
